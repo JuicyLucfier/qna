@@ -8,10 +8,6 @@ RSpec.describe QuestionsController, type: :controller do
 
     before { get :index }
 
-    it 'populates an array of all questions' do
-      expect(assigns(:questions)).to match_array(questions)
-    end
-
     it 'renders index view' do
       expect(response).to render_template :index
     end
@@ -46,11 +42,6 @@ RSpec.describe QuestionsController, type: :controller do
       it 'saves a new question in the database' do
         expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
       end
-
-      it 'redirects to show view' do
-        post :create, params: { question: attributes_for(:question) }
-        expect(response).to redirect_to assigns(:question)
-      end
     end
 
     context 'with invalid attributes' do
@@ -66,10 +57,6 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'PATCH #update' do
     context 'with valid attributes' do
-      it 'assigns the requested question to @question' do
-        patch :update, params: { id: question, question: attributes_for(:question) }
-        expect(assigns(:question)).to eq question
-      end
       it 'changes question attributes' do
         patch :update, params: { id: question, question: { title: 'new title', body: 'new body'} }
         question.reload
