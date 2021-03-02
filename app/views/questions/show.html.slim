@@ -1,0 +1,17 @@
+h1= question.title
+p= question.body
+- if current_user&.author_of?(question)
+  p= link_to 'Delete',
+          question_path(question),
+          method: :delete,
+          data: { confirm: 'Are you sure?' }
+h3= "Create answer"
+= render 'answers/form'
+h2= "Answers"
+- question.answers.each do |answer|
+  p= answer.body
+  - if current_user&.author_of?(answer)
+    p= link_to 'Delete answer',
+            answer_path(answer),
+            method: :delete,
+            data: { confirm: 'Are you sure?' }
