@@ -1,1 +1,13 @@
-ol= answer.body
+p= answer.body
+- if current_user&.author_of?(answer)
+  p= link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
+  p= link_to 'Delete answer',
+          answer_path(answer),
+          method: :delete,
+          remote: true,
+          data: { confirm: 'Are you sure?' }
+
+  = form_with model: answer, local: false, class: 'hidden', html: { id: "edit-answer-#{answer.id}" } do |f|
+    = f.label :body, 'Your answer'
+    = f.text_area :body
+    = f.submit 'Save'
