@@ -11,9 +11,11 @@ class AnswersController < ApplicationController
   end
 
   def update
-    @answer = Answer.find(params[:id])
-    @answer.update(answer_params)
-    @question = @answer.question
+    if current_user&.author_of?(answer)
+      @answer = Answer.find(params[:id])
+      @answer.update(answer_params)
+      @question = @answer.question
+    end
   end
 
   def destroy
@@ -21,6 +23,14 @@ class AnswersController < ApplicationController
       answer.destroy
 
       redirect_to answer.question, notice: 'Your answer successfully deleted!'
+    end
+  end
+
+  def best
+    if current_user&.author_of?(answer.question)
+      @question = answer.question
+      @answers = @question.answers
+      answer.change_mark
     end
   end
 

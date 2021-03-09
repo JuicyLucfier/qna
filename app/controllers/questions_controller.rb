@@ -16,15 +16,14 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    @question = Question.find(params[:id])
-    @question.update(question_params)
+    if current_user&.author_of?(question)
+      @question = Question.find(params[:id])
+      @question.update(question_params)
+    end
   end
 
   def show
     @answer = Answer.new
-  end
-
-  def edit
   end
 
   def destroy

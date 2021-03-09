@@ -1,4 +1,16 @@
 p= answer.body
+
+- if current_user&.author_of?(answer.question)
+  - if answer.best
+    p= link_to icon("star-fill", class: "best pointer"), best_answer_path(answer), class: 'best-answer-link', title: 'Unmark', id: "best-answer-#{answer.id}",
+            data: { best: answer.best, answer_id: answer.id }, method: 'patch', remote: true
+  - else
+    p= link_to icon("star", class: "best pointer"), best_answer_path(answer), class: 'best-answer-link', title: 'Mark as best', id: "best-answer-#{answer.id}",
+            data: { best: answer.best, answer_id: answer.id }, method: 'patch', remote: true
+- else
+  - if answer.best
+    = icon("star-fill", class: "best")
+
 - if current_user&.author_of?(answer)
   p= link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
   p= link_to 'Delete answer',
