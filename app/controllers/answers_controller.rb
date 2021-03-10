@@ -12,9 +12,9 @@ class AnswersController < ApplicationController
 
   def update
     if current_user&.author_of?(answer)
-      @answer = Answer.find(params[:id])
+      @answer = answer
       @answer.update(answer_params)
-      @question = @answer.question
+      @question = answer.question
     end
   end
 

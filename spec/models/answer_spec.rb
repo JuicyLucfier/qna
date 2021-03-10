@@ -16,7 +16,7 @@ RSpec.describe Answer, type: :model do
       it "unmarks answer" do
         best_answer.change_mark
 
-        expect(best_answer.best).to be_falsey
+        expect(best_answer).to_not be_best
       end
     end
 
@@ -24,7 +24,7 @@ RSpec.describe Answer, type: :model do
       it "marks answer as best" do
         answer.change_mark
 
-        expect(answer.best).to be_truthy
+        expect(answer).to be_best
       end
     end
   end

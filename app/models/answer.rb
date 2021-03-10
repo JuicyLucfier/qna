@@ -5,10 +5,10 @@ class Answer < ApplicationRecord
   belongs_to :question
 
   validates :body, presence: true
-  validate :validate_best_answer_present, on: :create, if: :best_answer?
+  validate :validate_best_answer_present, on: :create, if: :best?
 
   def change_mark
-    if best_answer?
+    if best?
       self.best = false
     else
       unmark_previous_answer(question) if best_answer(question).present?
@@ -28,10 +28,6 @@ class Answer < ApplicationRecord
     answer = best_answer(question)
     answer.best = false
     answer.save
-  end
-
-  def best_answer?
-    self.best == true
   end
 
   def validate_best_answer_present
