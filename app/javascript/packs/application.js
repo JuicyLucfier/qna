@@ -8,6 +8,14 @@ import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
 
+var jQuery = require("jquery");
+global.$ = global.jQuery = jQuery;
+window.$ = window.jQuery = jQuery;
+
+require("packs/utilities/edit_answer")
+require("packs/utilities/edit_question")
+require("packs/utilities/mark_best_answer")
+
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()

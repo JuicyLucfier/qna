@@ -1,18 +1,20 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: %i[show]
+  before_action :authenticate_user!
 
-  expose :answers, ->{ question.answers }
-  expose :answer
   expose :question, -> { Question.find(params[:question_id]) }
+  expose :answer
 
   def create
-    answer.question = question
-    answer.author = current_user
+    @answer = question.answers.create(answer_params)
+    @answer.author = current_user
+    @answer.save
+  end
 
-    if answer.save
-      redirect_to question, notice: 'Your answer successfully created!'
-    else
-      render 'questions/show'
+  def update
+    if current_user&.author_of?(answer)
+      @answer = answer
+      @answer.update(answer_params)
+      @question = answer.question
     end
   end
 
@@ -20,7 +22,15 @@ class AnswersController < ApplicationController
     if current_user&.author_of?(answer)
       answer.destroy
 
-      redirect_to question_path(answer.question), notice: 'Your answer successfully deleted!'
+      redirect_to answer.question, notice: 'Your answer successfully deleted!'
+    end
+  end
+
+  def best
+    if current_user&.author_of?(answer.question)
+      @question = answer.question
+      @answers = @question.answers
+      answer.change_mark
     end
   end
 
