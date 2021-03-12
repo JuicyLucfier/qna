@@ -1,5 +1,3 @@
-p= answer.body
-
 - if current_user&.author_of?(answer.question)
   - if answer.best
     p= link_to icon("star-fill", class: "best pointer"), best_answer_path(answer), class: 'best-answer-link', title: 'Unmark', id: "best-answer-#{answer.id}",
@@ -11,6 +9,19 @@ p= answer.body
   - if answer.best
     = icon("star-fill", class: "best")
 
+p= answer.body
+
+- if answer.files.attached?
+  - answer.files.each do |file|
+    p= link_to file.filename.to_s, url_for(file)
+
+    - if current_user&.author_of?(answer)
+      p= link_to 'Delete file',
+              delete_attachment_answer_path(id: answer, file_id: file.id),
+              remote: true,
+              method: :delete,
+              data: { confirm: 'Are you sure?' }
+
 - if current_user&.author_of?(answer)
   p= link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
   p= link_to 'Delete answer',
@@ -20,6 +31,11 @@ p= answer.body
           data: { confirm: 'Are you sure?' }
 
   = form_with model: answer, local: false, class: 'hidden', html: { id: "edit-answer-#{answer.id}" } do |f|
-    = f.label :body, 'Your answer'
-    = f.text_area :body
-    = f.submit 'Save'
+    p
+      = f.label :body, 'Your answer'
+      = f.text_area :body
+    p
+      = f.label :files
+      = f.file_field :files, multiple: true
+    p
+      = f.submit 'Save'

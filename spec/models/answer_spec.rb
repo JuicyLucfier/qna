@@ -12,6 +12,10 @@ RSpec.describe Answer, type: :model do
     let(:answer) { create(:answer, author: author, question: question)}
     let(:best_answer) { create(:answer, author: author, question: question, best: true) }
 
+    it 'have many attached files' do
+      expect(Answer.new.files).to be_an_instance_of(ActiveStorage::Attached::Many)
+    end
+
     context "answer is best" do
       it "unmarks answer" do
         best_answer.change_mark

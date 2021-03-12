@@ -40,6 +40,15 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def delete_attachment
+    if current_user&.author_of?(question)
+      file = ActiveStorage::Attachment.find(params[:file_id])
+      file.purge_later
+
+      redirect_to question
+    end
+  end
+
   private
 
   def question_params

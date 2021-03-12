@@ -122,4 +122,34 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'DELETE #delete_attachment' do
+    let!(:question) { create(:question, author: author) }
+
+    context 'author' do
+      before {
+        login(author)
+        question.files.attach(io: File.open(Rails.root.join("spec", "rails_helper.rb")), filename: 'rails_helper.rb',
+                            content_type: 'file/rb')
+      }
+
+      it 'deletes the question' do
+        expect { delete :delete_attachment, params: { id: question, file_id: question.files.first.id }, format: :js }.to change(question.files, :count).by(-1)
+      end
+
+      it 'redirects to index' do
+        delete :delete_attachment, params: { id: question, file_id: question.files.first.id }, format: :js
+        expect(response).to redirect_to question
+      end
+    end
+
+    context 'not author' do
+      before { login(user) }
+
+      it 'tries to delete the question' do
+        expect { delete :delete_attachment, params: { id: question }, format: :js }.to_not change(question.files, :count)
+      end
+    end
+  end
+
 end

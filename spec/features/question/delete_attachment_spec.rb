@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-feature 'User can delete his answer', %q{
-  In order to not show my answer anymore
+feature 'User can delete his attachments', %q{
+  In order to not show my attachments anymore
   As an authenticated user
-  I'd like to be able to delete answer
+  I'd like to be able to delete attachments
 } do
 
   given(:author) { create(:user) }
@@ -14,8 +14,6 @@ feature 'User can delete his answer', %q{
   describe 'Authenticated author' do
     scenario 'deletes the answer' do
       sign_in(answer.author)
-      answer.files.attach(io: File.open(Rails.root.join("spec", "rails_helper.rb")), filename: 'rails_helper.rb',
-                          content_type: 'file/rb')
       visit question_path(answer.question)
       click_on 'Delete answer'
 
