@@ -17,23 +17,18 @@ class QuestionsController < ApplicationController
 
   def update
     if current_user&.author_of?(question)
-      @question = load_question
+      @question = question
       @question.update(question_params)
     end
   end
 
-  def edit
-    self.question = load_question
-  end
-
   def show
-    self.question = load_question
+    self.question = Question.with_attached_files.find(params[:id])
     @answer = Answer.new
   end
 
   def destroy
     if current_user&.author_of?(question)
-      self.question = load_question
       question.destroy
 
       redirect_to questions_path, notice: 'Question successfully deleted!'
@@ -53,9 +48,5 @@ class QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:title, :body, files: [])
-  end
-
-  def load_question
-    Question.with_attached_files.find(params[:id])
   end
 end
