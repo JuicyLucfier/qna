@@ -17,7 +17,7 @@ p= answer.body
 
     - if current_user&.author_of?(answer)
       p= link_to 'Delete file',
-              delete_attachment_answer_path(id: answer, file_id: file.id),
+              attachment_path(file),
               remote: true,
               method: :delete,
               data: { confirm: 'Are you sure?' }

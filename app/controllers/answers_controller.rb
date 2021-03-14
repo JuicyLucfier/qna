@@ -26,15 +26,6 @@ class AnswersController < ApplicationController
     end
   end
 
-  def delete_attachment
-    if current_user&.author_of?(answer)
-      file = ActiveStorage::Attachment.find(params[:file_id])
-      file.purge_later
-
-      redirect_to answer.question
-    end
-  end
-
   def best
     if current_user&.author_of?(answer.question)
       @question = answer.question
@@ -48,5 +39,4 @@ class AnswersController < ApplicationController
   def answer_params
     params.require(:answer).permit(:body, files: [])
   end
-
 end

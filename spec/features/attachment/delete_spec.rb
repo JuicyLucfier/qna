@@ -12,9 +12,12 @@ feature 'User can delete his attachments', %q{
   given(:answer) { create(:answer, question: question, author: author) }
 
   describe 'Authenticated author' do
-    scenario 'deletes the attachment' do
+    background do
       question.files.attach(io: File.open(Rails.root.join("spec", "rails_helper.rb")), filename: 'rails_helper.rb',
                             content_type: 'file/rb')
+    end
+
+    scenario 'deletes the attachment' do
       sign_in(answer.author)
       visit question_path(answer.question)
 

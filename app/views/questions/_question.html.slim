@@ -6,7 +6,7 @@ p= question.body
     p= link_to file.filename.to_s, url_for(file)
     - if current_user&.author_of?(question)
       p= link_to 'Delete file',
-              delete_attachment_question_path(question: question, file_id: file.id),
+              attachment_path(file),
               remote: true,
               method: :delete,
               data: { confirm: 'Are you sure?' }
