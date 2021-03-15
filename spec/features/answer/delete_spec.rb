@@ -11,24 +11,29 @@ feature 'User can delete his answer', %q{
   given(:question) { create(:question, author: author) }
   given(:answer) { create(:answer, question: question, author: author)}
 
-  scenario 'Authenticated author deletes an answer' do
-    sign_in(answer.author)
-    visit question_path(answer.question)
-    click_on 'Delete answer'
+  describe 'Authenticated author' do
+    scenario 'deletes the answer' do
+      sign_in(answer.author)
+      answer.files.attach(io: File.open(Rails.root.join("spec", "rails_helper.rb")), filename: 'rails_helper.rb',
+                          content_type: 'file/rb')
+      visit question_path(answer.question)
+      click_on 'Delete answer'
 
-    expect(page).to_not have_content answer.body
-    expect(page).to have_content "Your answer successfully deleted!"
-  end
+      expect(page).to_not have_content answer.body
+      expect(page).to have_content "Your answer successfully deleted!"
+    end
 
-  scenario "Authenticated author can't delete not his answers" do
-    sign_in(user)
-    visit question_path(answer.question)
+    scenario "can't delete not his answers" do
+      sign_in(user)
+      visit question_path(answer.question)
 
-    expect(page).to_not have_link 'Delete answer'
+      expect(page).to_not have_link 'Delete answer'
+    end
   end
 
   scenario "Unauthenticated user can't delete any answer" do
     visit question_path(answer.question)
     expect(page).to_not have_link 'Delete answer'
   end
+
 end

@@ -142,9 +142,8 @@ RSpec.describe AnswersController, type: :controller do
       before { login(user) }
 
       it 'tries to delete the answer' do
-        expect { delete :destroy, params: { id: answer }, format: :js }.to_not change(Answer, :count)
+        expect { delete :destroy, params: { id: answer }, format: :js }.to_not change(answer.files, :count)
       end
     end
   end
-
 end

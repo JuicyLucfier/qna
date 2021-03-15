@@ -17,12 +17,13 @@ class QuestionsController < ApplicationController
 
   def update
     if current_user&.author_of?(question)
-      @question = Question.find(params[:id])
+      @question = question
       @question.update(question_params)
     end
   end
 
   def show
+    self.question = Question.with_attached_files.find(params[:id])
     @answer = Answer.new
   end
 
@@ -37,6 +38,6 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body, files: [])
   end
 end

@@ -7,10 +7,16 @@
 -if current_user
   h2= "Create answer"
   = form_with model: [question, @answer], local: false, class: 'new-answer' do |f|
-    = f.label :body, 'Your answer'
-    = f.text_area :body
-    = f.submit 'Create'
+    p
+      = f.label :body, 'Your answer'
+      = f.text_area :body
+    p
+      = f.label :files
+      = f.file_field :files, multiple: true
+    p
+      = f.submit 'Create'
 
 h2= "Answers"
 .answers
   = render question.answers
+
