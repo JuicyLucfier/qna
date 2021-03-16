@@ -19,6 +19,12 @@ p= question.body
           remote: true,
           data: { confirm: 'Are you sure?' }
 
+.links
+  p Links:
+  ul
+    - question.links.each do |link|
+      li= link_to link.name, link.url, target: :blank, nofollow: true
+
 .question-errors
   = render 'shared/errors', resource: question
 

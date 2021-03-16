@@ -11,6 +11,12 @@
 
 p= answer.body
 
+.links
+  p Links:
+  ul
+    - answer.links.each do |link|
+      li= link_to link.name, link.url, target: :blank, nofollow: true
+
 - if answer.files.attached?
   - answer.files.each do |file|
     p= link_to file.filename.to_s, url_for(file)
