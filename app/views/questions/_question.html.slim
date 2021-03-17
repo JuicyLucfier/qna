@@ -20,10 +20,15 @@ p= question.body
           data: { confirm: 'Are you sure?' }
 
 .links
-  p Links:
-  ul
-    - question.links.each do |link|
-      li= link_to link.name, link.url, target: :blank, nofollow: true
+  - if question.links.present?
+    p Links:
+    ul
+      - question.links.each do |link|
+        li
+          = link_to link.name, link.url, target: :blank, nofollow: true
+          - if current_user&.author_of?(question)
+            = ' '
+            = link_to 'delete link', link_path(link), method: :delete, remote: true, data: { confirm: "Are you sure?" }
 
 .question-errors
   = render 'shared/errors', resource: question
@@ -38,5 +43,6 @@ p= question.body
   p
     = f.label :files
     = f.file_field :files, multiple: true
-  p
-    = f.submit 'Save question'
+  .links
+    p= link_to_add_association 'add link', f, :links, partial: 'shared/link_fields'
+    p= f.submit 'Save question'

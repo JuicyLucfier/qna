@@ -42,10 +42,14 @@ feature 'User can edit his answer', %q{
       click_on 'Edit answer'
 
       within '.answers' do
+        fill_in 'Your answer', with: ''
+
         click_on 'Save'
 
         expect(page).to have_content answer.body
       end
+
+      expect(page).to have_content "Body can't be blank"
     end
 
     scenario "tries to edit other user's answer", js: true do
