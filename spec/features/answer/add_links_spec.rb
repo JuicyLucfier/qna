@@ -10,84 +10,166 @@ feature 'Author can add links to answer', %q{
   given(:author) { create(:user) }
   given(:question) { create(:question, author: author)}
   given!(:answer) { create(:answer, question: question, author: author) }
-  given(:gist_url) { 'https://gist.github.com/vkurennov/743f9367caa1039874af5a2244e1b44c'}
+  given(:gist_url) { 'https://gist.github.com/JuicyLucfier/6e61db1d65bec40f2df5fab504d74bb5'}
+  given(:url) { 'http://google.ru' }
 
   describe 'Authenticated author' do
-    scenario 'adds link when creates answer', js: true do
-      sign_in(author)
-      visit question_path(question)
-
-      click_on 'add link'
-
-      fill_in 'Your answer', with: 'text text text'
-
-      fill_in 'Link name', with: 'My gist'
-      fill_in 'Url', with: gist_url
-
-      click_on 'Create'
-
-      within '.answers' do
-        expect(page).to have_link 'My gist', href: gist_url
-      end
-    end
-
-    scenario 'adds link when edits answer', js: true do
-      sign_in(author)
-      visit question_path(question)
-
-      click_on 'Edit answer'
-
-      within '.answers' do
-        fill_in 'Your answer', with: 'edited answer'
+    context 'adds link' do
+      scenario 'when creates answer', js: true do
+        sign_in(author)
+        visit question_path(question)
 
         click_on 'add link'
-        fill_in 'Link name', with: 'My gist'
-        fill_in 'Url', with: gist_url
 
-        click_on 'Save'
+        fill_in 'Your answer', with: 'text text text'
 
-        expect(page).to have_link 'My gist', href: gist_url
-        expect(page).to_not have_content answer.body
-        expect(page).to have_content 'edited answer'
-        expect(page).to_not have_selector 'textarea'
+        fill_in 'Link name', with: 'My link'
+        fill_in 'Url', with: url
+
+        click_on 'Create'
+
+        within '.answers' do
+          expect(page).to have_link 'My link', href: url
+        end
       end
-    end
 
-    scenario 'adds link when creates answer with errors', js: true do
-      sign_in(author)
-      visit question_path(question)
+      scenario 'when edits answer', js: true do
+        sign_in(author)
+        visit question_path(question)
 
-      click_on 'add link'
-
-      fill_in 'Link name', with: 'My gist'
-      fill_in 'Url', with: gist_url
-
-      click_on 'Create'
-
-      expect(page).to have_content "Body can't be blank"
-      expect(page).to_not have_link 'My gist', href: gist_url
-    end
-
-    scenario 'adds link when edits answer with errors', js: true do
-      sign_in(author)
-      visit question_path(question)
-
-      within '.answers' do
         click_on 'Edit answer'
 
-        fill_in 'Your answer', with: ''
+        within '.answers' do
+          fill_in 'Your answer', with: 'edited answer'
+
+          click_on 'add link'
+          fill_in 'Link name', with: 'My link'
+          fill_in 'Url', with: url
+
+          click_on 'Save'
+
+          expect(page).to have_link 'My link', href: url
+          expect(page).to_not have_content answer.body
+          expect(page).to have_content 'edited answer'
+          expect(page).to_not have_selector 'textarea'
+        end
+      end
+
+      scenario 'when creates answer with errors', js: true do
+        sign_in(author)
+        visit question_path(question)
+
+        click_on 'add link'
+
+        fill_in 'Link name', with: 'My link'
+        fill_in 'Url', with: url
+
+        click_on 'Create'
+
+        expect(page).to have_content "Body can't be blank"
+        expect(page).to_not have_link 'My link', href: url
+      end
+
+      scenario 'when edits answer with errors', js: true do
+        sign_in(author)
+        visit question_path(question)
+
+        within '.answers' do
+          click_on 'Edit answer'
+
+          fill_in 'Your answer', with: ''
+
+          click_on 'add link'
+
+          fill_in 'Link name', with: 'My link'
+          fill_in 'Url', with: url
+
+          click_on 'Save'
+
+          expect(page).to have_content answer.body
+          expect(page).to_not have_link 'My link', href: url
+        end
+        expect(page).to have_content "Body can't be blank"
+      end
+    end
+
+    context 'adds gist link' do
+      scenario 'when creates answer', js: true do
+        sign_in(author)
+        visit question_path(question)
+
+        click_on 'add link'
+
+        fill_in 'Your answer', with: 'text text text'
+
+        fill_in 'Link name', with: 'My gist'
+        fill_in 'Url', with: gist_url
+
+        click_on 'Create'
+
+        within '.answers' do
+          expect(page).to have_link 'delete link'
+        end
+      end
+
+      scenario 'when edits answer', js: true do
+        sign_in(author)
+        visit question_path(question)
+
+        click_on 'Edit answer'
+
+        within '.answers' do
+          fill_in 'Your answer', with: 'edited answer'
+
+          click_on 'add link'
+          fill_in 'Link name', with: 'My gist'
+          fill_in 'Url', with: gist_url
+
+          click_on 'Save'
+
+          expect(page).to have_link 'delete link'
+          expect(page).to_not have_content answer.body
+          expect(page).to have_content 'edited answer'
+          expect(page).to_not have_selector 'textarea'
+        end
+      end
+
+      scenario 'when creates answer with errors', js: true do
+        sign_in(author)
+        visit question_path(question)
 
         click_on 'add link'
 
         fill_in 'Link name', with: 'My gist'
         fill_in 'Url', with: gist_url
 
-        click_on 'Save'
+        click_on 'Create'
 
-        expect(page).to have_content answer.body
-        expect(page).to_not have_link 'My gist', href: gist_url
+        expect(page).to have_content "Body can't be blank"
+        expect(page).to_not have_link 'delete link'
       end
-      expect(page).to have_content "Body can't be blank"
+
+      scenario 'when edits answer with errors', js: true do
+        sign_in(author)
+        visit question_path(question)
+
+        within '.answers' do
+          click_on 'Edit answer'
+
+          fill_in 'Your answer', with: ''
+
+          click_on 'add link'
+
+          fill_in 'Link name', with: 'My gist'
+          fill_in 'Url', with: gist_url
+
+          click_on 'Save'
+
+          expect(page).to have_content answer.body
+          expect(page).to_not have_link 'delete link'
+        end
+        expect(page).to have_content "Body can't be blank"
+      end
     end
 
     scenario "can't add links to other user's question", js: true do

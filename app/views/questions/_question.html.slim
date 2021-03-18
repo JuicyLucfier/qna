@@ -25,7 +25,10 @@ p= question.body
     ul
       - question.links.each do |link|
         li
-          = link_to link.name, link.url, target: :blank, nofollow: true
+          - if link.gist?
+            .gist data-src="#{link.url}.json"
+          - else
+            = link_to link.name, link.url, target: :blank, nofollow: true
           - if current_user&.author_of?(question)
             = ' '
             = link_to 'delete link', link_path(link), method: :delete, remote: true, data: { confirm: "Are you sure?" }
