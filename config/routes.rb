@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   resources :attachments, only: ['destroy']
   resources :links, only: ['destroy']
+  resources :badges, only: ['index']
 
   resources :questions do
     resources :answers, shallow: true, only: %i[create update destroy best] do

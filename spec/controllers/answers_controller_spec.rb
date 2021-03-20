@@ -105,6 +105,11 @@ RSpec.describe AnswersController, type: :controller do
           end
         end
 
+        it 'gives badge to author of answer' do
+          patch :best, params: { id: answer, answer: { best: false } }, format: :js
+          expect(answer.author.badges.last).to eq answer.question.badge
+        end
+
         it 'redirects to question' do
           patch :best, params: { id: answer, answer: { best: false } }, format: :js
           expect(response).to render_template :best
