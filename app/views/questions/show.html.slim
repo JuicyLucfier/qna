@@ -5,18 +5,8 @@
   = render 'shared/errors', resource: @answer
 
 -if current_user
-  h2= "Create answer"
-  = form_with model: [question, @answer], local: false, class: 'new-answer' do |f|
-    p
-      = f.label :body, 'Your answer'
-      = f.text_area :body
-    p
-      = f.label :files
-      = f.file_field :files, multiple: true
-    p
-      = f.submit 'Create'
+  = render 'answers/form'
 
 h2= "Answers"
 .answers
   = render question.answers
-

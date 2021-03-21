@@ -5,6 +5,11 @@ class QuestionsController < ApplicationController
   expose :question
   expose :answer, ->{ question.answers.new }
 
+  def new
+    question.links.new
+    question.build_badge
+  end
+
   def create
     question.author = current_user
 
@@ -25,6 +30,8 @@ class QuestionsController < ApplicationController
   def show
     self.question = Question.with_attached_files.find(params[:id])
     @answer = Answer.new
+    @question = question
+    @answer.links.new
   end
 
   def destroy
@@ -38,6 +45,6 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:title, :body, files: [])
+    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [], links_attributes: [:name, :url])
   end
 end

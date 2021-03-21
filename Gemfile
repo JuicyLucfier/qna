@@ -25,6 +25,9 @@ gem 'jbuilder', '~> 2.7'
 gem 'bootstrap'
 gem 'devise'
 gem 'google-cloud-storage'
+gem "validate_url"
+gem "cocoon"
+gem 'active_storage_validations'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 

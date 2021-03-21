@@ -4,7 +4,11 @@ class Answer < ApplicationRecord
   belongs_to :author, class_name: 'User', foreign_key: :author_id
   belongs_to :question
 
+  has_many :links, dependent: :destroy, as: :linkable
+
   has_many_attached :files, dependent: :destroy
+
+  accepts_nested_attributes_for :links, reject_if: :all_blank, allow_destroy: true
 
   validates :body, presence: true
   validate :validate_best_answer_present, on: :create, if: :best?
@@ -14,6 +18,7 @@ class Answer < ApplicationRecord
       self.best = false
     else
       unmark_previous_answer(question) if best_answer(question).present?
+      author.badges.push(question.badge) if question.badge.present?
       self.best = true
     end
 
