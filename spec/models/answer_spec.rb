@@ -34,6 +34,12 @@ RSpec.describe Answer, type: :model do
 
         expect(answer).to be_best
       end
+
+      it 'gives badge to author of answer' do
+        answer.change_mark
+
+        expect(answer.author.badges.last).to eq answer.question.badge
+      end
     end
   end
 end

@@ -18,6 +18,7 @@ class Answer < ApplicationRecord
       self.best = false
     else
       unmark_previous_answer(question) if best_answer(question).present?
+      author.badges.push(question.badge) if question.badge.present?
       self.best = true
     end
 

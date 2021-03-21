@@ -31,7 +31,6 @@ class AnswersController < ApplicationController
       @question = answer.question
       @answers = @question.answers
       answer.change_mark
-      answer.author.badges.push(@question.badge) if @question.badge.present? && answer.best?
     end
   end
 
