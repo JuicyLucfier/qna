@@ -1,51 +1,8 @@
 h1= question.title
 p= question.body
 
-- if question.files.attached?
-  - question.files.each do |file|
-    p= link_to file.filename.to_s, url_for(file)
-    - if current_user&.author_of?(question)
-      p= link_to 'Delete file',
-              attachment_path(file),
-              remote: true,
-              method: :delete,
-              data: { confirm: 'Are you sure?' }
-
-- if current_user&.author_of?(question)
-  p= link_to 'Edit question', '#', class: 'edit-question-link', data: { question_id: question.id }
-  p= link_to 'Delete',
-          question_path(question),
-          method: :delete,
-          remote: true,
-          data: { confirm: 'Are you sure?' }
-
-.links
-  - if question.links.present?
-    p Links:
-    ul
-      - question.links.each do |link|
-        li
-          - if link.gist?
-            .gist data-src="#{link.url}.json"
-          - else
-            = link_to link.name, link.url, target: :blank, nofollow: true
-          - if current_user&.author_of?(question)
-            = ' '
-            = link_to 'delete link', link_path(link), method: :delete, remote: true, data: { confirm: "Are you sure?" }
-
-.question-errors
-  = render 'shared/errors', resource: question
-
-= form_with model: question, local: false, class: 'hidden', html: { id: "edit-question-#{question.id}" } do |f|
-  p
-    = f.label :title
-    = f.text_field :title
-  p
-    = f.label :body
-    = f.text_area :body
-  p
-    = f.label :files
-    = f.file_field :files, multiple: true
-  .links
-    p= link_to_add_association 'add link', f, :links, partial: 'shared/link_fields'
-    p= f.submit 'Save question'
+= render 'shared/vote_links', resource: question
+= render 'questions/attached_files', question: question
+= render 'questions/actions', question: question
+= render 'questions/attached_links', question: question
+= render 'questions/edit_form', question: question
