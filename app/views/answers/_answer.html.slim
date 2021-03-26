@@ -1,59 +1,11 @@
-- if current_user&.author_of?(answer.question)
-  - if answer.best
-    p= link_to icon("star-fill", class: "best pointer"), best_answer_path(answer), class: 'best-answer-link', title: 'Unmark', id: "best-answer-#{answer.id}",
-            data: { best: answer.best, answer_id: answer.id }, method: 'patch', remote: true
-  - else
-    p= link_to icon("star", class: "best pointer"), best_answer_path(answer), class: 'best-answer-link', title: 'Mark as best', id: "best-answer-#{answer.id}",
-            data: { best: answer.best, answer_id: answer.id }, method: 'patch', remote: true
-- else
-  - if answer.best
-    = icon("star-fill", class: "best")
+= render 'answers/best_links', answer: answer
+= render 'shared/vote_links', resource: answer
 
 p= answer.body
 
-.links
-  - if answer.links.present?
-    p Links:
-    ul
-      - answer.links.each do |link|
-        li
-          - if link.gist?
-            .gist data-src="#{link.url}.json"
-          - else
-            = link_to link.name, link.url, target: :blank, nofollow: true
-          - if current_user&.author_of?(answer)
-            = ' '
-            = link_to 'delete link', link_path(link), method: :delete, remote: true, data: { confirm: "Are you sure?" }
-
-- if answer.files.attached?
-  - answer.files.each do |file|
-    p
-      = link_to file.filename.to_s, url_for(file)
-      - if current_user&.author_of?(answer)
-        = ' '
-        = link_to 'Delete file',
-                attachment_path(file),
-                remote: true,
-                method: :delete,
-                data: { confirm: 'Are you sure?' }
-
-- if current_user&.author_of?(answer)
-  p= link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
-  p= link_to 'Delete answer',
-          answer_path(answer),
-          method: :delete,
-          remote: true,
-          data: { confirm: 'Are you sure?' }
-
-  = form_with model: answer, local: false, class: 'hidden', html: { id: "edit-answer-#{answer.id}" } do |f|
-    p
-      = f.label :body, 'Your answer'
-      = f.text_area :body
-    p
-      = f.label :files
-      = f.file_field :files, multiple: true
-    .links
-      p= link_to_add_association 'add link', f, :links, partial: 'shared/link_fields'
-      p= f.submit 'Save'
+= render 'answers/attached_links', answer: answer
+= render 'answers/attached_files', answer: answer
+= render 'answers/actions', answer: answer
+= render 'answers/edit_form', answer: answer
 
 hr

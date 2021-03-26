@@ -1,4 +1,6 @@
 class AnswersController < ApplicationController
+  include Voted
+
   before_action :authenticate_user!
 
   expose :question, -> { Question.find(params[:question_id]) }

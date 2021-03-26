@@ -7,7 +7,6 @@ import Rails from "@rails/ujs"
 import Turbolinks from "turbolinks"
 import * as ActiveStorage from "@rails/activestorage"
 import "channels"
-import startLoadingGists from './utilities/gist'
 
 require("@nathanvda/cocoon")
 
@@ -17,7 +16,7 @@ window.$ = window.jQuery = jQuery;
 
 require("packs/utilities/edit_answer")
 require("packs/utilities/edit_question")
-require("packs/utilities/mark_best_answer")
+require("packs/utilities/mark_voted")
 require("packs/utilities/gist")
 
 Rails.start()

@@ -1,0 +1,18 @@
+- if current_user&.author_of?(answer.question)
+  - if answer.best
+    p= link_to icon("star-fill", class: "best pointer"), best_answer_path(answer),
+            class: 'best-answer-link',
+            title: 'Unmark',
+            id: "best-answer-#{answer.id}",
+            method: 'patch',
+            remote: true
+  - else
+    p= link_to icon("star", class: "best pointer"), best_answer_path(answer),
+            class: 'best-answer-link',
+            title: 'Mark as best',
+            id: "best-answer-#{answer.id}",
+            method: 'patch',
+            remote: true
+- else
+  - if answer.best
+    = icon("star-fill", class: "best")

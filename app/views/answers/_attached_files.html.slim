@@ -1,0 +1,11 @@
+- if answer.files.attached?
+  - answer.files.each do |file|
+    p
+      = link_to file.filename.to_s, url_for(file)
+      - if current_user&.author_of?(answer)
+        = ' '
+        = link_to 'Delete file',
+                attachment_path(file),
+                remote: true,
+                method: :delete,
+                data: { confirm: 'Are you sure?' }

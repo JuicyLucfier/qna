@@ -1,0 +1,13 @@
+.links
+  - if answer.links.present?
+    p Links:
+    ul
+      - answer.links.each do |link|
+        li
+          - if link.gist?
+            .gist data-src="#{link.url}.json"
+          - else
+            = link_to link.name, link.url, target: :blank, nofollow: true
+          - if current_user&.author_of?(answer)
+            = ' '
+            = link_to 'delete link', link_path(link), method: :delete, remote: true, data: { confirm: "Are you sure?" }

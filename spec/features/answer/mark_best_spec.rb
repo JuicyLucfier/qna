@@ -18,7 +18,6 @@ feature 'Author can mark best answer', %q{
   end
 
   describe 'Authenticated author' do
-
     scenario 'marks best answer', js: true do
       sign_in(author)
       visit question_path(question)
