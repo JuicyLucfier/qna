@@ -7,37 +7,32 @@ module Voted
   end
 
   def vote_for
-    unless current_user.author_of?(@votable)
-      current_user.votes.create(votable: @votable, value: "for")
-      @votable.do_vote(1)
-      render_json_rating(@votable)
-    end
+    vote(@votable, "for")
   end
 
   def vote_against
-    unless current_user.author_of?(@votable)
-      current_user.votes.create(votable: @votable, value: "against")
-      @votable.do_vote(-1)
-      render_json_rating(@votable)
-    end
+    vote(@votable, "against")
   end
 
   def vote_cancel
-    unless current_user.author_of?(@votable)
-      @votable.do_vote(vote_value(@votable) == "for" ? -1 : 1)
-      current_user.vote(@votable).destroy
-      render_json_rating(@votable)
-    end
+    vote(@votable, vote_value(@votable), true )
   end
 
   private
+
+  def vote(votable, value, cancel = false)
+    unless current_user.author_of?(votable)
+      votable.do_vote(value, current_user, cancel)
+      render_json_rating(votable)
+    end
+  end
 
   def render_json_rating(resource)
     render json: { id: resource.id, rating: resource.rating, vote_value: vote_value(resource), class_name: resource.class.name }
   end
 
   def vote_value(resource)
-    current_user.voted?(@votable) ? current_user&.vote(resource).value : "cancel"
+    current_user.voted?(resource) ? current_user&.vote(resource).value : "cancel"
   end
 
   def model_klass

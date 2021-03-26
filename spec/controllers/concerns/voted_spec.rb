@@ -19,6 +19,7 @@ shared_examples 'voted_answer' do
           answer.reload
 
           expect(answer.rating).to eq 1
+          expect{ patch :vote_for, params: { id: answer }, format: :json}.to change(answer.votes, :count).by(1)
         end
 
         it 'votes against answer' do
@@ -26,6 +27,7 @@ shared_examples 'voted_answer' do
           answer.reload
 
           expect(answer.rating).to eq -1
+          expect{ patch :vote_for, params: { id: answer }, format: :json}.to change(answer.votes, :count).by(1)
         end
 
         it 'responds with json' do
@@ -45,6 +47,7 @@ shared_examples 'voted_answer' do
           answer.reload
 
           expect(answer.rating).to eq 0
+          expect{ patch :vote_for, params: { id: answer }, format: :json}.to change(answer.votes, :count).by(1)
         end
 
         it 'responds with json' do
@@ -87,6 +90,7 @@ shared_examples 'voted_question' do
           question.reload
 
           expect(question.rating).to eq 1
+          expect{ patch :vote_for, params: { id: question }, format: :json }.to change(question.votes, :count).by(1)
         end
 
         it 'votes against question' do
@@ -94,6 +98,7 @@ shared_examples 'voted_question' do
           question.reload
 
           expect(question.rating).to eq -1
+          expect{ patch :vote_for, params: { id: question }, format: :json }.to change(question.votes, :count).by(1)
         end
 
         it 'responds with json' do
@@ -113,6 +118,7 @@ shared_examples 'voted_question' do
           question.reload
 
           expect(question.rating).to eq 0
+          expect{ patch :vote_for, params: { id: question }, format: :json }.to change(question.votes, :count).by(1)
         end
 
         it 'responds with json' do

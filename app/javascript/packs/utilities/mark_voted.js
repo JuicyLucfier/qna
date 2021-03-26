@@ -4,7 +4,7 @@ $(document).on('.vote').on('ajax:success', function(e) {
     let voteValue = e.detail[0].vote_value
     let className = e.detail[0].class_name
 
-    $('.rating-' + id).html('<p>' + rating + '</p>');
+    $('.rating-' + className + '-' + id).html('<p>' + rating + '</p>');
 
     if(voteValue === "for"){
         $('.vote-link#vote-for-' + className + '-' + id).addClass('hidden');

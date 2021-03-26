@@ -15,7 +15,7 @@ class User < ApplicationRecord
   end
 
   def voted?(subject)
-    votes.find_by(votable: subject).present?
+    vote(subject).present?
   end
 
   def vote(subject)
