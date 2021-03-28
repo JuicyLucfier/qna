@@ -1,13 +1,16 @@
 const { environment } = require('@rails/webpacker')
 
 const webpack = require('webpack')
-environment.plugins.append(
+environment.plugins.prepend(
     'Provide',
     new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
-        Popper: ['popper.js', 'default']
     })
 )
+
+const handlebars = require('./loaders/handlebars')
+
+environment.loaders.prepend('handlebars', handlebars)
 
 module.exports = environment

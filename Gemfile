@@ -29,6 +29,7 @@ gem "validate_url"
 gem "cocoon"
 gem 'active_storage_validations'
 gem 'with_model'
+gem 'gon'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 

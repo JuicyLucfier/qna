@@ -3,6 +3,8 @@ class QuestionsController < ApplicationController
 
   before_action :authenticate_user!, except: %i[index show]
 
+  after_action :publish_question, only: [:create]
+
   expose :questions, ->{ Question.all }
   expose :question
   expose :answer, ->{ question.answers.new }
@@ -48,5 +50,16 @@ class QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [], links_attributes: [:name, :url])
+  end
+
+  def publish_question
+    return if question.errors.any?
+    ActionCable.server.broadcast(
+      'questions',
+      ApplicationController.render(
+        partial: 'questions/question_link',
+        locals: { question: question }
+      )
+    )
   end
 end
