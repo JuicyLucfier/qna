@@ -33,6 +33,7 @@ class QuestionsController < ApplicationController
 
   def show
     self.question = Question.with_attached_files.find(params[:id])
+    gon.question_id = question.id
     @answer = Answer.new
     @question = question
     @answer.links.new
