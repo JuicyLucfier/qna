@@ -2,6 +2,7 @@ class AnswersController < ApplicationController
   include Voted
 
   before_action :authenticate_user!
+  before_action :set_comment
   after_action :publish_answer, only: [:create]
 
   expose :question, -> { Question.find(params[:question_id]) }
@@ -46,5 +47,9 @@ class AnswersController < ApplicationController
   def publish_answer
     return if @answer.errors.any?
     ActionCable.server.broadcast("question_#{question.id}/answers", @answer)
+  end
+
+  def set_comment
+    @comment = Comment.new
   end
 end

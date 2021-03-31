@@ -1,0 +1,9 @@
+h4 Comments:
+ul
+  div class="#{question.class.name}-comments"
+    = render question.comments
+
+div class="#{question.class.name}-comment-errors"
+  = render 'shared/errors', resource: @comment
+
+= render 'comments/form', commentable: question, comment: @comment

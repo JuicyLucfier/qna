@@ -1,0 +1,7 @@
+= form_with model: [commentable, comment], local: false, class: "new-#{commentable.class.name}-comment" do |f|
+  .field
+    p
+      = f.label :body
+      = f.text_area :body
+  p
+    = f.submit 'Comment'

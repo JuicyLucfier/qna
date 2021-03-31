@@ -27,6 +27,7 @@ class QuestionsController < ApplicationController
   def update
     if current_user&.author_of?(question)
       @question = question
+      @comment = Comment.new
       @question.update(question_params)
     end
   end
@@ -36,6 +37,7 @@ class QuestionsController < ApplicationController
     gon.question_id = question.id
     @answer = Answer.new
     @question = question
+    @comment = Comment.new
     @answer.links.new
   end
 
@@ -50,7 +52,8 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [], links_attributes: [:name, :url])
+    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [],
+                                     links_attributes: [:name, :url])
   end
 
   def publish_question

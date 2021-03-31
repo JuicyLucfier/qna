@@ -15,7 +15,10 @@ Rails.application.routes.draw do
   resources :badges, only: ['index']
 
   resources :questions, concerns: [:voted] do
+    resources :comments, only: [:create]
+
     resources :answers, concerns: [:voted], shallow: true, only: %i[create update destroy best] do
+      resources :comments, only: [:create]
       member do
         patch 'best', to: 'answers#best'
       end
