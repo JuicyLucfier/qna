@@ -1,5 +1,6 @@
 h1= "Questions"
 p= link_to 'Ask question', new_question_path
 
-- questions.each do |question|
-  p= question.title
+.questions
+  - questions.each do |question|
+    = render 'question_link', question: question

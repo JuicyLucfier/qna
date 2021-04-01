@@ -51,7 +51,6 @@ feature 'Author can add links to answer', %q{
           expect(page).to have_link 'My link', href: url
           expect(page).to_not have_content answer.body
           expect(page).to have_content 'edited answer'
-          expect(page).to_not have_selector 'textarea'
         end
       end
 
@@ -130,7 +129,6 @@ feature 'Author can add links to answer', %q{
           expect(page).to have_link 'delete link'
           expect(page).to_not have_content answer.body
           expect(page).to have_content 'edited answer'
-          expect(page).to_not have_selector 'textarea'
         end
       end
 

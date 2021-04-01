@@ -3,6 +3,8 @@ class QuestionsController < ApplicationController
 
   before_action :authenticate_user!, except: %i[index show]
 
+  after_action :publish_question, only: [:create]
+
   expose :questions, ->{ Question.all }
   expose :question
   expose :answer, ->{ question.answers.new }
@@ -25,14 +27,17 @@ class QuestionsController < ApplicationController
   def update
     if current_user&.author_of?(question)
       @question = question
+      @comment = Comment.new
       @question.update(question_params)
     end
   end
 
   def show
     self.question = Question.with_attached_files.find(params[:id])
+    gon.question_id = question.id
     @answer = Answer.new
     @question = question
+    @comment = Comment.new
     @answer.links.new
   end
 
@@ -47,6 +52,18 @@ class QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [], links_attributes: [:name, :url])
+    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], files: [],
+                                     links_attributes: [:name, :url])
+  end
+
+  def publish_question
+    return if question.errors.any?
+    ActionCable.server.broadcast(
+      'questions',
+      ApplicationController.render(
+        partial: 'questions/question_link',
+        locals: { question: question }
+      )
+    )
   end
 end

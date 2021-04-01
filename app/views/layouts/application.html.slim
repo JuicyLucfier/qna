@@ -1,0 +1,23 @@
+html lang="en"
+  head
+    title Qna
+    = csrf_meta_tags
+    = csp_meta_tag
+    = action_cable_meta_tag
+    = Gon::Base.render_data
+
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+  body
+    header
+      - if current_user
+        = link_to 'Log out', destroy_user_session_path, method: 'delete'
+      - else
+        p
+          = link_to 'Login', new_user_session_path
+          = link_to 'Signup', new_user_registration_path
+    p class='notice'
+      = notice
+    p class='alert'
+      = alert
+    = yield
