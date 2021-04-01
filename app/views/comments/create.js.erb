@@ -1,7 +1,7 @@
 $('.<%= @commentable.class.name %>-comment-errors').html('<%= render 'shared/errors', resource: @comment %>');
 
 <% unless @commentable.errors.present? %>
-  $('.<%= @commentable.class.name %>-comments').append('<%= j render @comment %>');
+  $('.<%= @commentable.class.name %>-comments-<%= @commentable.id %>').append('<%= j render @comment %>');
   $('.new-<%= @commentable.class.name %>-comment #comment_body').val('');
   window.loadGists()
 <% end %>
