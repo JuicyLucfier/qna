@@ -6,4 +6,5 @@ ul
 div class="#{answer.class.name}-comment-errors"
   = render 'shared/errors', resource: @comment
 
-= render 'comments/form', commentable: answer, comment: @comment
+-if can?(:create, Comment)
+  = render 'comments/form', commentable: answer, comment: @comment

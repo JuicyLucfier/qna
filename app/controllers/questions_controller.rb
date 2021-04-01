@@ -5,6 +5,8 @@ class QuestionsController < ApplicationController
 
   after_action :publish_question, only: [:create]
 
+  authorize_resource
+
   expose :questions, ->{ Question.all }
   expose :question
   expose :answer, ->{ question.answers.new }

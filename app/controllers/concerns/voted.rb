@@ -4,6 +4,8 @@ module Voted
   included do
      before_action :authenticate_user!, only: %i[vote_for vote_against vote_cancel]
      before_action :set_votable, only: %i[vote_for vote_against vote_cancel]
+
+     authorize_resource
   end
 
   def vote_for

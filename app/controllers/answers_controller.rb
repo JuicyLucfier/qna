@@ -5,6 +5,8 @@ class AnswersController < ApplicationController
   before_action :set_comment
   after_action :publish_answer, only: [:create]
 
+  authorize_resource
+
   expose :question, -> { Question.find(params[:question_id]) }
   expose :answer
 
