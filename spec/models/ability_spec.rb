@@ -22,12 +22,22 @@ describe Ability do
   describe 'for user' do
     let(:user) { create(:user) }
     let(:other) { create(:user) }
+
     let(:user_question) { create(:question, author: user) }
     let(:other_question) { create(:question, author: other) }
+
     let(:user_answer) { create(:answer, question: user_question, author: user) }
     let(:other_answer) { create(:answer, question: other_question, author: other) }
+
     let(:user_answer_and_other_user) { create(:answer, question: user_question, author: other) }
     let(:other_answer_and_other_user) { create(:answer, question: other_question, author: other) }
+
+    let!(:user_vote_other_question) { create(:vote, value: "for", votable: other_question, user: user) }
+    let!(:other_vote_user_question) { create(:vote, value: "against", votable: user_question, user: other) }
+
+    let!(:user_vote_other_answer) { create(:vote, value: "for", votable: other_answer, user: user) }
+    let!(:other_vote_user_answer) { create(:vote, value: "against", votable: user_answer, user: other) }
+
 
     it { should_not be_able_to :manage, :all }
     it { should be_able_to :read, :all }
@@ -55,8 +65,8 @@ describe Ability do
     end
 
     describe 'best' do
-      it { should be_able_to :best, user_answer }
-      it { should_not be_able_to :best, user_answer_and_other_user }
+      it { should be_able_to :best, user_answer_and_other_user }
+      it { should_not be_able_to :best, other_answer_and_other_user }
     end
 
     describe 'votes' do
@@ -80,7 +90,7 @@ describe Ability do
         it { should be_able_to :vote_cancel, other_question }
         it { should_not be_able_to :vote_cancel, user_question }
 
-        it { should be_able_to :vote_cancel, other_answer_and_other_user }
+        it { should be_able_to :vote_cancel, other_answer }
         it { should_not be_able_to :vote_cancel, user_answer }
       end
     end
