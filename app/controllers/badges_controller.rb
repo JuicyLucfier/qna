@@ -1,8 +1,6 @@
 class BadgesController < ApplicationController
   before_action :authenticate_user!
 
-  authorize_resource
-
   expose :badge
 
   def index

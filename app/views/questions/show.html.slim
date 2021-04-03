@@ -4,7 +4,7 @@ div class="question" id="question-id" data-id="#{question.id}"
 .answer-errors
   = render 'shared/errors', resource: @answer
 
--if current_user
+-if can? :create, Answer
   = render 'answers/form'
 
 h2= "Answers"

@@ -1,7 +1,9 @@
 h1= question.title
 p= question.body
 
-= render 'shared/vote_links', resource: question
+-if %i[vote_for vote_against vote_cancel].any? { |action| can? action, question }
+  = render 'shared/vote_links', resource: question
+
 = render 'questions/attached_files', question: question
 = render 'questions/actions', question: question
 = render 'questions/attached_links', question: question

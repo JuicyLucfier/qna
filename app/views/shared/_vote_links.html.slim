@@ -2,76 +2,26 @@ div class="rating-#{resource.class.name}-#{resource.id}"
   p= resource.rating
 
 .vote
-  -if current_user && !current_user.author_of?(resource)
-    -if current_user&.voted?(resource)
-      -if current_user&.vote(resource).value == "for"
-        p= link_to icon("hand-thumbs-up-fill", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_cancel),
-                class: 'voted-link',
-                title: 'Voted for',
-                id: "voted-for-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
+  -if current_user&.voted?(resource)
+    -if current_user&.vote(resource).value == "for"
+      p= link_to icon("hand-thumbs-up-fill", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_cancel),
+              class: 'voted-link',
+              title: 'Voted for',
+              id: "voted-for-#{resource.class.name}-#{resource.id}",
+              data: { type: :json },
+              method: 'patch',
+              remote: true
 
-        p= link_to icon("hand-thumbs-down-fill", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_cancel),
-                class: 'voted-link hidden',
-                title: 'Voted against',
-                id: "voted-against-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
+      p= link_to icon("hand-thumbs-down-fill", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_cancel),
+              class: 'voted-link hidden',
+              title: 'Voted against',
+              id: "voted-against-#{resource.class.name}-#{resource.id}",
+              data: { type: :json },
+              method: 'patch',
+              remote: true
 
-        p= link_to icon("hand-thumbs-up", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_for),
-                class: 'vote-link hidden',
-                title: 'Vote for',
-                id: "vote-for-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-
-        p= link_to icon("hand-thumbs-down", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_against),
-                class: 'vote-link hidden',
-                title: 'Vote against',
-                id: "vote-against-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-      -else
-        p= link_to icon("hand-thumbs-down-fill", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_cancel),
-                class: 'voted-link',
-                title: 'Voted against',
-                id: "voted-against-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-
-        p= link_to icon("hand-thumbs-up-fill", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_cancel),
-                class: 'voted-link hidden',
-                title: 'Voted for',
-                id: "voted-for-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-
-
-        p= link_to icon("hand-thumbs-up", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_for),
-                class: 'vote-link hidden',
-                title: 'Vote for',
-                id: "vote-for-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-
-        p= link_to icon("hand-thumbs-down", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_against),
-                class: 'vote-link hidden',
-                title: 'Vote against',
-                id: "vote-against-#{resource.class.name}-#{resource.id}",
-                data: { type: :json },
-                method: 'patch',
-                remote: true
-    -else
       p= link_to icon("hand-thumbs-up", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_for),
-              class: 'vote-link',
+              class: 'vote-link hidden',
               title: 'Vote for',
               id: "vote-for-#{resource.class.name}-#{resource.id}",
               data: { type: :json },
@@ -79,15 +29,15 @@ div class="rating-#{resource.class.name}-#{resource.id}"
               remote: true
 
       p= link_to icon("hand-thumbs-down", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_against),
-              class: 'vote-link',
+              class: 'vote-link hidden',
               title: 'Vote against',
               id: "vote-against-#{resource.class.name}-#{resource.id}",
               data: { type: :json },
               method: 'patch',
               remote: true
-
+    -else
       p= link_to icon("hand-thumbs-down-fill", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_cancel),
-              class: 'voted-link hidden',
+              class: 'voted-link',
               title: 'Voted against',
               id: "voted-against-#{resource.class.name}-#{resource.id}",
               data: { type: :json },
@@ -101,3 +51,52 @@ div class="rating-#{resource.class.name}-#{resource.id}"
               data: { type: :json },
               method: 'patch',
               remote: true
+
+
+      p= link_to icon("hand-thumbs-up", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_for),
+              class: 'vote-link hidden',
+              title: 'Vote for',
+              id: "vote-for-#{resource.class.name}-#{resource.id}",
+              data: { type: :json },
+              method: 'patch',
+              remote: true
+
+      p= link_to icon("hand-thumbs-down", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_against),
+              class: 'vote-link hidden',
+              title: 'Vote against',
+              id: "vote-against-#{resource.class.name}-#{resource.id}",
+              data: { type: :json },
+              method: 'patch',
+              remote: true
+  -else
+    p= link_to icon("hand-thumbs-up", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_for),
+            class: 'vote-link',
+            title: 'Vote for',
+            id: "vote-for-#{resource.class.name}-#{resource.id}",
+            data: { type: :json },
+            method: 'patch',
+            remote: true
+
+    p= link_to icon("hand-thumbs-down", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_against),
+            class: 'vote-link',
+            title: 'Vote against',
+            id: "vote-against-#{resource.class.name}-#{resource.id}",
+            data: { type: :json },
+            method: 'patch',
+            remote: true
+
+    p= link_to icon("hand-thumbs-down-fill", class: "vote-against pointer"), polymorphic_path(resource, action: :vote_cancel),
+            class: 'voted-link hidden',
+            title: 'Voted against',
+            id: "voted-against-#{resource.class.name}-#{resource.id}",
+            data: { type: :json },
+            method: 'patch',
+            remote: true
+
+    p= link_to icon("hand-thumbs-up-fill", class: "vote-for pointer"), polymorphic_path(resource, action: :vote_cancel),
+            class: 'voted-link hidden',
+            title: 'Voted for',
+            id: "voted-for-#{resource.class.name}-#{resource.id}",
+            data: { type: :json },
+            method: 'patch',
+            remote: true

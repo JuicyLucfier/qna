@@ -24,10 +24,8 @@ module Voted
   private
 
   def vote(votable, value, cancel = false)
-    unless current_user.author_of?(votable)
-      votable.do_vote(value, current_user, cancel)
-      render_json_rating(votable)
-    end
+    votable.do_vote(value, current_user, cancel)
+    render_json_rating(votable)
   end
 
   def render_json_rating(resource)
