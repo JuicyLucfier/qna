@@ -1,4 +1,4 @@
-- if current_user&.author_of?(answer)
+-if %i[update destroy].any? { |action| can? action, answer }
   p= link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
   p= link_to 'Delete answer',
           answer_path(answer),

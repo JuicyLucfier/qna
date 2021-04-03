@@ -3,39 +3,37 @@ class AnswersController < ApplicationController
 
   before_action :authenticate_user!
   before_action :set_comment
+
   after_action :publish_answer, only: [:create]
 
   expose :question, -> { Question.find(params[:question_id]) }
   expose :answer
 
   def create
+    authorize! :create, Answer
     @answer = question.answers.create(answer_params)
     @answer.author = current_user
     @answer.save
   end
 
   def update
-    if current_user&.author_of?(answer)
-      @answer = answer
-      @answer.update(answer_params)
-      @question = answer.question
-    end
+    authorize! :update, answer
+    @answer = answer
+    @answer.update(answer_params)
+    @question = answer.question
   end
 
   def destroy
-    if current_user&.author_of?(answer)
-      answer.destroy
-
-      redirect_to answer.question, notice: 'Your answer successfully deleted!'
-    end
+    authorize! :destroy, answer
+    answer.destroy
+    redirect_to answer.question, notice: 'Your answer successfully deleted!'
   end
 
   def best
-    if current_user&.author_of?(answer.question)
-      @question = answer.question
-      @answers = @question.answers
-      answer.change_mark
-    end
+    authorize! :best, answer
+    @question = answer.question
+    @answers = @question.answers
+    answer.change_mark
   end
 
   private

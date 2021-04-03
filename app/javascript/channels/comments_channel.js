@@ -5,7 +5,7 @@ $(document).on('turbolinks:load', function() {
     consumer.subscriptions.create({ channel: "CommentsChannel", question_id: gon.question_id }, {
       received(data) {
         if (gon.user_id != data.author_id) {
-          $('.' + data.commentable_type + '-comments').append(data.body)
+          $('.' + data.commentable_type + '-comments-' + data.commentable_id).append(data.body)
         }
       }
     })

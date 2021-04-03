@@ -1,5 +1,7 @@
 = render 'answers/best_links', answer: answer
-= render 'shared/vote_links', resource: answer
+
+-if %i[vote_for vote_against vote_cancel].any? { |action| can? action, answer }
+  = render 'shared/vote_links', resource: answer
 
 p= answer.body
 

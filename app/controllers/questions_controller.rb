@@ -15,6 +15,7 @@ class QuestionsController < ApplicationController
   end
 
   def create
+    authorize! :create, Question
     question.author = current_user
 
     if question.save
@@ -25,11 +26,10 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if current_user&.author_of?(question)
-      @question = question
-      @comment = Comment.new
-      @question.update(question_params)
-    end
+    authorize! :update, question
+    @question = question
+    @comment = Comment.new
+    @question.update(question_params)
   end
 
   def show
@@ -42,11 +42,10 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    if current_user&.author_of?(question)
-      question.destroy
+    authorize! :destroy, question
+    question.destroy
 
-      redirect_to questions_path, notice: 'Question successfully deleted!'
-    end
+    redirect_to questions_path, notice: 'Question successfully deleted!'
   end
 
   private

@@ -7,24 +7,25 @@ module Voted
   end
 
   def vote_for
+    authorize! :vote_for, @votable
     vote(@votable, "for")
   end
 
   def vote_against
+    authorize! :vote_against, @votable
     vote(@votable, "against")
   end
 
   def vote_cancel
+    authorize! :vote_cancel, @votable
     vote(@votable, vote_value(@votable), true )
   end
 
   private
 
   def vote(votable, value, cancel = false)
-    unless current_user.author_of?(votable)
-      votable.do_vote(value, current_user, cancel)
-      render_json_rating(votable)
-    end
+    votable.do_vote(value, current_user, cancel)
+    render_json_rating(votable)
   end
 
   def render_json_rating(resource)

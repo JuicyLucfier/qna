@@ -2,7 +2,7 @@
   - answer.files.each do |file|
     p
       = link_to file.filename.to_s, url_for(file)
-      - if current_user&.author_of?(answer)
+      - if can? :destroy, file
         = ' '
         = link_to 'Delete file',
                 attachment_path(file),
