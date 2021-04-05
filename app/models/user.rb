@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :badges, through: :user_badges
   has_many :votes, dependent: :destroy
 
+  scope :all_except, ->(user) { where("id != ?", user.id) }
+
   def author_of?(subject)
     id == subject.author_id
   end
@@ -22,5 +24,4 @@ class User < ApplicationRecord
   def vote(subject)
     votes.find_by(votable: subject)
   end
-
 end
