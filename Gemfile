@@ -31,6 +31,9 @@ gem 'active_storage_validations'
 gem 'with_model'
 gem 'gon'
 gem 'cancancan'
+gem 'doorkeeper'
+gem 'active_model_serializers', '~> 0.10'
+gem 'oj'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
