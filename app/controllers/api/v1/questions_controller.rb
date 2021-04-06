@@ -21,9 +21,21 @@ class Api::V1::QuestionsController < Api::V1::BaseController
     end
   end
 
+  def update
+    if question.update(question_params)
+      render json: question
+    else
+      render json: question.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    question.destroy
+  end
+
   private
 
   def question_params
-    params.require(:question).permit(:title, :body, links_attributes: [:name, :url])
+    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], links_attributes: [:name, :url])
   end
 end

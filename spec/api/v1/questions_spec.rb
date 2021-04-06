@@ -158,7 +158,6 @@ describe 'Questions API', type: :request do
 
         it 'returns all public fields' do
           post '/api/v1/questions', params: { question: attributes_for(:question), access_token: access_token.token, headers: headers }
-          byebug
           %w[id title body created_at updated_at].each do |attr|
             expect(question_response[attr]).to eq Question.last.send(attr).as_json
           end
@@ -174,6 +173,125 @@ describe 'Questions API', type: :request do
           post '/api/v1/questions', params: { question: attributes_for(:question, :invalid), access_token: access_token.token, headers: headers }
 
           expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
+  end
+
+  describe 'PATCH /api/v1/questions/:id' do
+    let(:author) { create(:user) }
+    let!(:question) { create(:question, author: author) }
+    let(:api_path) { "/api/v1/questions/#{question.id}" }
+
+    # it_behaves_like 'API Authorizable' do
+    #   let(:method) { :patch }
+    # end
+
+    context 'authorized' do
+      context 'author' do
+        let(:question_response) { json['question'] }
+        let(:author_access_token) { create(:access_token, resource_owner_id: author.id) }
+
+        context 'with valid attributes' do
+          it 'returns 200 status' do
+            patch api_path, params: { id: question, question: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
+
+            expect(response).to be_successful
+          end
+
+          it 'changes question attributes' do
+            patch api_path, params: { id: question, question: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
+            question.reload
+
+            expect(question.body).to eq 'new body'
+          end
+
+          it 'returns all public fields' do
+            patch api_path, params: { id: question, question: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
+            question.reload
+
+            %w[id title body created_at updated_at].each do |attr|
+              expect(question_response[attr]).to eq question.send(attr).as_json
+            end
+          end
+        end
+
+        context 'with invalid attributes' do
+          it 'does not change question attributes' do
+            expect do
+              patch api_path, params: { id: question, question: attributes_for(:question, :invalid), access_token: author_access_token.token, headers: headers }
+              to_not change(question, :body)
+            end
+          end
+
+          it 'returns unprocessable entity status' do
+            patch api_path, params: { id: question, question: attributes_for(:question, :invalid), access_token: author_access_token.token, headers: headers }
+
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+        end
+      end
+
+      context 'not author' do
+        let(:user) { create(:user) }
+        let(:user_access_token) { create(:access_token, resource_owner_id: user.id) }
+
+        it 'does not change question attributes' do
+          expect do
+            patch api_path, params: { id: question, question: { body: 'new body' }, access_token: user_access_token.token, headers: headers }
+            to_not change(question, :body)
+          end
+        end
+
+        it 'returns forbidden status' do
+          expect do
+            patch api_path, params: { id: question, question: { body: 'new body' }, access_token: user_access_token.token, headers: headers }
+            to have_http_status(:forbidden)
+          end
+        end
+      end
+    end
+  end
+
+  describe 'DELETE /api/v1/questions/:id' do
+    let(:author) { create(:user) }
+    let!(:question) { create(:question, author: author) }
+    let(:api_path) { "/api/v1/questions/#{question.id}" }
+
+    # it_behaves_like 'API Authorizable' do
+    #   let(:method) { :patch }
+    # end
+
+    context 'authorized' do
+      context 'author' do
+        let(:author_access_token) { create(:access_token, resource_owner_id: author.id) }
+
+        it 'returns 200 status' do
+          delete api_path, params: { access_token: author_access_token.token, headers: headers }
+
+          expect(response).to be_successful
+        end
+
+        it 'deletes the question' do
+          expect { delete api_path, params: { access_token: author_access_token.token, headers: headers } }
+            .to change(Question, :count).by(-1)
+        end
+      end
+
+      context 'not author' do
+        let(:user) { create(:user) }
+        let(:user_access_token) { create(:access_token, resource_owner_id: user.id) }
+
+        it 'tries to delete the question' do
+          expect { delete api_path, params: { access_token: user_access_token.token, headers: headers } }
+            .to_not change(Question, :count)
+        end
+
+        it 'returns forbidden status' do
+          expect do
+            delete api_path, params: { access_token: user_access_token.token, headers: headers }
+            to have_http_status(:forbidden)
+          end
         end
       end
     end
