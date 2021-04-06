@@ -141,6 +141,7 @@ describe 'Questions API', type: :request do
 
     context 'authorized' do
       let(:user) { create(:user) }
+      let(:question_response) { json['question'] }
       let(:access_token) { create(:access_token) }
 
       context 'with valid attributes' do
@@ -153,6 +154,14 @@ describe 'Questions API', type: :request do
         it 'saves a new question in the database' do
           expect { post '/api/v1/questions', params: { question: attributes_for(:question), access_token: access_token.token,
                                                        headers: headers } }.to change(Question, :count).by(1)
+        end
+
+        it 'returns all public fields' do
+          post '/api/v1/questions', params: { question: attributes_for(:question), access_token: access_token.token, headers: headers }
+          byebug
+          %w[id title body created_at updated_at].each do |attr|
+            expect(question_response[attr]).to eq Question.last.send(attr).as_json
+          end
         end
       end
 
