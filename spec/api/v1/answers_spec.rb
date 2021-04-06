@@ -1,8 +1,34 @@
 require 'rails_helper'
 
 describe 'Answers API', type: :request do
-  let(:headers) { { "CONTENT_TYPE" => "application/json",
-                    "ACCEPT" => 'application/json'} }
+  let(:headers) { { "ACCEPT" => 'application/json' } }
+
+  describe "GET /api/v1/questions/:id/answers" do
+    let(:user) { create(:user) }
+    let(:access_token) { create(:access_token) }
+    let(:question) { create(:question, author: user) }
+    let!(:answers) { create_list(:answer, 3, author: user, question: question) }
+
+    let(:api_path) { "/api/v1/questions/#{question.id}/answers" }
+    let(:method) { :get }
+
+    describe 'answers' do
+      let(:answer) { answers.first }
+      let(:answer_response) { json['answers'] }
+
+      before { do_request(method, api_path, params: { access_token: access_token.token }, headers: headers) }
+
+      it 'returns list of answers' do
+        expect(answer_response.size).to eq answers.size
+      end
+
+      it 'returns all public fields' do
+        %w[id body created_at updated_at].each do |attr|
+          expect(answer_response.first[attr]).to eq answer.send(attr).as_json
+        end
+      end
+    end
+  end
 
   describe 'GET /api/v1/answers/:id' do
     let(:user) { create(:user) }
@@ -61,20 +87,18 @@ describe 'Answers API', type: :request do
       let(:access_token) { create(:access_token) }
 
       context 'with valid attributes' do
-        it 'returns 200 status' do
-          post api_path, params: { answer: attributes_for(:answer), access_token: access_token.token, headers: headers }
+        before { do_request(method, api_path, params: { answer: attributes_for(:answer), access_token: access_token.token }, headers: headers) }
 
+        it 'returns 200 status' do
           expect(response).to be_successful
         end
 
         it 'saves a new answer in the database' do
-          expect { post api_path, params: { answer: attributes_for(:answer), access_token: access_token.token, headers: headers } }
+          expect{ do_request(method, api_path, params: { answer: attributes_for(:answer), access_token: access_token.token }, headers: headers) }
             .to change(question.answers, :count).by(1)
         end
 
         it 'returns all public fields' do
-          post api_path, params: { answer: attributes_for(:answer), access_token: access_token.token, headers: headers }
-
           %w[id body created_at updated_at].each do |attr|
             expect(answer_response[attr]).to eq Answer.last.send(attr).as_json
           end
@@ -83,12 +107,12 @@ describe 'Answers API', type: :request do
 
       context 'with invalid attributes' do
         it 'does not save the answer' do
-          expect { post api_path, params: { answer: attributes_for(:answer, :invalid), access_token: access_token.token, headers: headers } }
+          expect { do_request(method, api_path, params: { answer: attributes_for(:answer, :invalid), access_token: access_token.token }, headers: headers) }
             .to_not change(Answer, :count)
         end
 
         it 'returns unprocessable entity status' do
-          post api_path, params: { answer: attributes_for(:answer, :invalid), access_token: access_token.token, headers: headers }
+          do_request(method, api_path, params: { answer: attributes_for(:answer, :invalid), access_token: access_token.token }, headers: headers)
 
           expect(response).to have_http_status(:unprocessable_entity)
         end
@@ -112,21 +136,19 @@ describe 'Answers API', type: :request do
         let(:author_access_token) { create(:access_token, resource_owner_id: author.id) }
 
         context 'with valid attributes' do
-          it 'returns 200 status' do
-            patch api_path, params: { answer: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
+          before { do_request(method, api_path, params: { answer: { body: 'new body' }, access_token: author_access_token.token }, headers: headers) }
 
+          it 'returns 200 status' do
             expect(response).to be_successful
           end
 
           it 'changes answer attributes' do
-            patch api_path, params: { answer: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
             answer.reload
 
             expect(answer.body).to eq 'new body'
           end
 
           it 'returns all public fields' do
-            patch api_path, params: { answer: { body: 'new body' }, access_token: author_access_token.token, headers: headers }
             answer.reload
 
             %w[id body created_at updated_at].each do |attr|
@@ -138,13 +160,13 @@ describe 'Answers API', type: :request do
         context 'with invalid attributes' do
           it 'does not change answer attributes' do
             expect do
-              patch api_path, params: { answer: attributes_for(:answer, :invalid), access_token: author_access_token.token, headers: headers }
+              do_request(method, api_path, params: { answer: attributes_for(:answer, :invalid), access_token: author_access_token.token }, headers: headers)
               to_not change(answer, :body)
             end
           end
 
           it 'returns unprocessable entity status' do
-            patch api_path, params: { answer: attributes_for(:answer, :invalid), access_token: author_access_token.token, headers: headers }
+            do_request(method, api_path, params: { answer: attributes_for(:answer, :invalid), access_token: author_access_token.token }, headers: headers)
 
             expect(response).to have_http_status(:unprocessable_entity)
           end
@@ -155,16 +177,10 @@ describe 'Answers API', type: :request do
         let(:user) { create(:user) }
         let(:user_access_token) { create(:access_token, resource_owner_id: user.id) }
 
-        it 'does not change answer attributes' do
+        it 'does not change answer attributes and returns foribidden status' do
           expect do
-            patch api_path, params: { answer: { body: 'new body' }, access_token: user_access_token.token, headers: headers }
+            do_request(method, api_path, params: { answer: { body: 'new body' }, access_token: author_access_token.token }, headers: headers)
             to_not change(answer, :body)
-          end
-        end
-
-        it 'returns forbidden status' do
-          expect do
-            patch api_path, params: { answer: { body: 'new body' }, access_token: user_access_token.token, headers: headers }
             to have_http_status(:forbidden)
           end
         end
@@ -202,14 +218,10 @@ describe 'Answers API', type: :request do
         let(:user) { create(:user) }
         let(:user_access_token) { create(:access_token, resource_owner_id: user.id) }
 
-        it 'tries to delete the answer' do
-          expect { delete api_path, params: { access_token: user_access_token.token, headers: headers } }
-            .to_not change(Answer, :count)
-        end
-
-        it 'returns forbidden status' do
+        it 'does not delete the answer and returns forbidden status' do
           expect do
-            delete api_path, params: { access_token: user_access_token.token, headers: headers }
+            do_request(method, api_path, access_token: user_access_token.token, headers: headers)
+            to_not change(Answer, :count)
             to have_http_status(:forbidden)
           end
         end

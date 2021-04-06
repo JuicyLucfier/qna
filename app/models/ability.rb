@@ -38,5 +38,9 @@ class Ability
     can :vote_cancel, [Question, Answer] do |votable|
       user.voted?(votable)
     end
+
+    can :me, User do |profile|
+      profile.id == user.id
+    end
   end
 end

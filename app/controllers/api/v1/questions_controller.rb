@@ -1,41 +1,44 @@
 class Api::V1::QuestionsController < Api::V1::BaseController
   expose :question
+  expose :questions, -> { Question.all }
 
   def index
-    @questions = Question.all
-    render json: @questions
+    render json: questions, each_serializer: QuestionsSerializer
   end
 
   def show
-    @question = Question.find(params[:id])
-    render json: @question
+    render json: question, serializer: QuestionSerializer
   end
 
   def create
+    authorize! :create, Question
     question.author = current_resource_owner
 
     if question.save
-      render json: question
+      render json: question, serializer: QuestionSerializer
     else
       render json: question.errors, status: :unprocessable_entity
     end
   end
 
   def update
+    authorize! :update, question
+
     if question.update(question_params)
-      render json: question
+      render json: question, serializer: QuestionSerializer
     else
       render json: question.errors, status: :unprocessable_entity
     end
   end
 
   def destroy
+    authorize! :destroy, question
     question.destroy
   end
 
   private
 
   def question_params
-    params.require(:question).permit(:title, :body, badge_attributes: [:title, :image], links_attributes: [:name, :url])
+    params.require(:question).permit(:title, :body)
   end
 end

@@ -5,6 +5,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
   end
 
   def me
+    authorize! :me, User
     render json: current_resource_owner
   end
 end
