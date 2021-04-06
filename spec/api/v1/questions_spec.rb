@@ -131,4 +131,42 @@ describe 'Questions API', type: :request do
       end
     end
   end
+
+  describe 'POST /api/v1/questions' do
+    # let(:api_path) { '/api/v1/questions' }
+    #
+    # it_behaves_like 'API Authorizable' do
+    #   let(:method) { :post }
+    # end
+
+    context 'authorized' do
+      let(:user) { create(:user) }
+      let(:access_token) { create(:access_token) }
+
+      context 'with valid attributes' do
+        it 'returns 200 status' do
+          post '/api/v1/questions', params: { question: attributes_for(:question), access_token: access_token.token, headers: headers }
+
+          expect(response).to be_successful
+        end
+
+        it 'saves a new question in the database' do
+          expect { post '/api/v1/questions', params: { question: attributes_for(:question), access_token: access_token.token,
+                                                       headers: headers } }.to change(Question, :count).by(1)
+        end
+      end
+
+      context 'with invalid attributes' do
+        it 'does not save the question' do
+          expect { post '/api/v1/questions', params: { question: attributes_for(:question, :invalid) } }.to_not change(Question, :count)
+        end
+
+        it 'returns unprocessable entity status' do
+          post '/api/v1/questions', params: { question: attributes_for(:question, :invalid), access_token: access_token.token, headers: headers }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
+  end
 end
