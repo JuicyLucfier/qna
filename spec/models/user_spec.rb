@@ -16,6 +16,15 @@ RSpec.describe User, type: :model do
   let(:question) { create(:question, author: author) }
   let(:vote) { create(:vote, value: "for", votable: question, user: user) }
 
+  describe 'all except authenticated' do
+    let!(:authenticated) { create(:user) }
+    let!(:users) { create_list(:user, 2) }
+
+    it 'should return users' do
+      expect(User.all_except(authenticated)).to eq users
+    end
+  end
+
   describe 'Check authorship' do
       it 'User is author' do
         expect(author).to be_author_of(question)

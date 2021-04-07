@@ -65,7 +65,6 @@ feature 'Author can add links to answer', %q{
 
         click_on 'Create'
 
-        expect(page).to have_content "Body can't be blank"
         expect(page).to_not have_link 'My link', href: url
       end
 

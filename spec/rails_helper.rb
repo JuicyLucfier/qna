@@ -40,6 +40,7 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include ControllersHelpers, type: :controller
   config.include FeatureHelpers, type: :feature
+  config.include ApiHelpers, type: :request
   config.include ActiveStorageValidations::Matchers, type: :model
   config.extend WithModel
   
