@@ -16,4 +16,10 @@ class Question < ApplicationRecord
   accepts_nested_attributes_for :badge, reject_if: :all_blank
 
   validates :title, :body, presence: true
+
+  scope :all_created_last_day, -> { select { |question| question.created_last_day? } }
+
+  def created_last_day?
+    (Time.now - created_at).to_i / 3600 <= 24
+  end
 end
