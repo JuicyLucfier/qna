@@ -9,8 +9,7 @@ class Question < ApplicationRecord
   has_many :links, dependent: :destroy, as: :linkable
   has_many :votes, dependent: :destroy, as: :votable
   has_many :comments, dependent: :destroy, as: :commentable
-  has_many :user_subscriptions, dependent: :destroy
-  has_many :subscribers, class_name: 'User', through: :user_subscriptions
+  has_many :subscriptions, dependent: :destroy
 
   has_many_attached :files, dependent: :destroy
 
@@ -19,9 +18,13 @@ class Question < ApplicationRecord
 
   validates :title, :body, presence: true
 
-  scope :all_created_last_day, -> { select { |question| question.created_last_day? } }
+  scope :all_created_last_day, -> { Question.where(created_at: Time.current.all_day) }
 
-  def created_last_day?
-    (Time.now - created_at).to_i / 3600 <= 24
+  after_create :create_subscription
+
+  private
+
+  def create_subscription
+    self.subscriptions.create(user: author)
   end
 end

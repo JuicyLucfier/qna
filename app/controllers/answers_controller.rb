@@ -5,7 +5,6 @@ class AnswersController < ApplicationController
   before_action :set_comment
 
   after_action :publish_answer, only: [:create]
-  after_action :send_mail, only: [:create]
 
   expose :question, -> { Question.find(params[:question_id]) }
   expose :answer
@@ -38,11 +37,6 @@ class AnswersController < ApplicationController
   end
 
   private
-
-  def send_mail
-    return if @answer.errors.any?
-    NewAnswerNotificationJob.perform_later(@answer)
-  end
 
   def answer_params
     params.require(:answer).permit(:body, files: [], links_attributes: [:name, :url, :_destroy])

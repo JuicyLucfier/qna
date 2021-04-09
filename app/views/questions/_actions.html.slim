@@ -6,26 +6,15 @@
           remote: true,
           data: { confirm: 'Are you sure?' }
 
--if can? :subscribe, question
-  -if current_user.subscribed?(question)
-    p= link_to 'Unsubscribe', subscribe_question_path(question),
+-if current_user&.subscribed?(question)
+  -if can? :destroy, current_user&.subscription(question)
+    p= link_to 'Unsubscribe', subscription_path(current_user.subscription(question)),
             class: 'unsubscribe-link',
-            method: 'patch',
-            remote: true,
-            data: { link_name: 'unsubscribe-link', subscribed: true }
-    p= link_to 'Subscribe', subscribe_question_path(question),
-            class: 'subscribe-link hidden',
-            method: 'patch',
-            remote: true,
-            data: { link_name: 'subscribe-link', subscribed: false }
-  -else
-    p= link_to 'Subscribe', subscribe_question_path(question),
+            method: 'delete',
+            remote: true
+-else
+  -if can? :create, Subscription
+    p= link_to 'Subscribe', question_subscriptions_path(question),
             class: 'subscribe-link',
-            method: 'patch',
-            remote: true,
-            data: { link_name: 'unsubscribe-link', subscribed: true }
-    p= link_to 'Unsubscribe', subscribe_question_path(question),
-            class: 'unsubscribe-link hidden',
-            method: 'patch',
-            remote: true,
-            data: { link_name: 'subscribe-link', subscribed: false }
+            method: 'post',
+            remote: true

@@ -29,6 +29,9 @@ describe Ability do
     let(:user_answer) { create(:answer, question: user_question, author: user) }
     let(:other_answer) { create(:answer, question: other_question, author: other) }
 
+    let(:user_subscription) { create(:subscription, question: user_question, user: other) }
+    let(:other_user_subscription) { create(:subscription, question: other_question, user: create(:user)) }
+
     let(:user_answer_and_other_user) { create(:answer, question: user_question, author: other) }
     let(:other_answer_and_other_user) { create(:answer, question: other_question, author: other) }
 
@@ -46,6 +49,7 @@ describe Ability do
       it { should be_able_to :create, Question }
       it { should be_able_to :create, Answer }
       it { should be_able_to :create, Comment }
+      it { should be_able_to :create, Subscription }
     end
 
     describe 'update' do
@@ -62,6 +66,9 @@ describe Ability do
 
       it { should be_able_to :destroy, user_answer }
       it { should_not be_able_to :destroy, user_answer_and_other_user }
+
+      it { should be_able_to :destroy, user_subscription }
+      it { should_not be_able_to :destroy, other_user_subscription }
     end
 
     describe 'best' do

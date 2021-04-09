@@ -16,12 +16,22 @@ feature 'Author can subscribe for question', %q{
   end
 
   describe 'Authenticated user' do
-    scenario 'subscribes', js: true do
-      sign_in(user)
-      visit question_path(question)
-      click_on 'Subscribe'
+    context 'unsubscribed' do
+      scenario 'subscribes', js: true do
+        sign_in(create(:user))
+        visit question_path(question)
+        click_on 'Subscribe'
 
-      expect(page).to have_link 'Unsubscribe'
+        expect(page).to have_link 'Unsubscribe'
+      end
+
+      scenario 'unsubscribes', js: true do
+        sign_in(user)
+        visit question_path(question)
+        click_on 'Unsubscribe'
+
+        expect(page).to have_link 'Subscribe'
+      end
     end
   end
 end

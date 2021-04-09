@@ -8,9 +8,8 @@ class User < ApplicationRecord
   has_many :answers, class_name: 'Answer', foreign_key: :author_id, dependent: :destroy
   has_many :comments, class_name: 'Comment', foreign_key: :author_id, dependent: :destroy
   has_many :user_badges, dependent: :destroy
-  has_many :user_subscriptions, dependent: :destroy
   has_many :badges, through: :user_badges
-  has_many :subscriptions, class_name: 'Question', through: :user_subscriptions
+  has_many :subscriptions, dependent: :destroy
   has_many :votes, dependent: :destroy
 
   scope :all_except, ->(user) { where("id != ?", user.id) }
@@ -27,21 +26,11 @@ class User < ApplicationRecord
     votes.find_by(votable: subject)
   end
 
-  def manage_subscription_of(subject)
-    subscribed?(subject) ? unsubscribe(subject) : subscribe(subject)
-  end
-
   def subscribed?(subject)
-    subscriptions.find_by(id: subject.id).present?
+    subscription(subject).present?
   end
 
-  private
-
-  def subscribe(subject)
-    subscriptions.push(subject)
-  end
-
-  def unsubscribe(subject)
-    subscriptions.delete(subject)
+  def subscription(subject)
+    subscriptions.find_by(question: subject)
   end
 end

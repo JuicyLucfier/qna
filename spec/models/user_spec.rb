@@ -4,9 +4,7 @@ RSpec.describe User, type: :model do
   it { should have_many(:questions).dependent(:destroy) }
   it { should have_many(:answers).dependent(:destroy) }
   it { should have_many(:user_badges).dependent(:destroy) }
-  it { should have_many(:user_subscriptions).dependent(:destroy) }
   it { should have_many(:badges).through(:user_badges) }
-  it { should have_many(:subscriptions).through(:user_subscriptions) }
   it { should have_many(:votes).dependent(:destroy) }
   it { should have_many(:comments).dependent(:destroy) }
 
@@ -63,31 +61,12 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '#manage_subscription_of(subject)' do
-    let(:user) { create(:user) }
-    let(:question) { create(:question, author: user) }
-
-    context 'user subscribed' do
-      before { user.subscriptions.push(question) }
-
-      it 'unsubscribes user' do
-        expect { user.manage_subscription_of(question) }.to change(question.subscribers, :count).by(-1)
-      end
-    end
-
-    context 'user unsubscribed' do
-      it 'subscribes user' do
-        expect { user.manage_subscription_of(question) }.to change(question.subscribers, :count).by(1)
-      end
-    end
-  end
-
   describe '#subscribed?(subject)' do
     let(:user) { create(:user) }
     let(:question) { create(:question, author: user) }
 
     context 'user subscribed' do
-      before { user.subscriptions.push(question) }
+      before { user.subscriptions.create(question: question) }
 
       it 'returns true' do
         expect(user.subscribed?(question)).to be_truthy
@@ -96,8 +75,20 @@ RSpec.describe User, type: :model do
 
     context 'user unsubscribed' do
       it 'returns false' do
-        expect(user.subscribed?(question)).to be_falsey
+        expect(create(:user).subscribed?(question)).to be_falsey
       end
+    end
+  end
+
+  describe "Search for user's subscription that matches object's id" do
+    let!(:subscription) { create(:subscription, question: question, user: user) }
+
+    it 'subscription is found' do
+      expect(user.subscription(question)).to eq subscription
+    end
+
+    it 'subscription is not found' do
+      expect(author.subscription(question)).to_not eq subscription
     end
   end
 end

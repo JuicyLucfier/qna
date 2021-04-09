@@ -22,11 +22,8 @@ Rails.application.routes.draw do
   resources :badges, only: [:index]
 
   resources :questions, concerns: [:voted] do
+    resources :subscriptions, shallow: true
     resources :comments, only: [:create]
-
-    member do
-      patch 'subscribe', to: 'questions#subscribe'
-    end
 
     resources :answers, concerns: [:voted], shallow: true, only: %i[create update destroy best] do
       resources :comments, only: [:create]

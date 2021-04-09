@@ -132,37 +132,4 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
   end
-
-  describe 'PATCH #subscribe' do
-    before { login(author) }
-
-    let!(:question) { create(:question, author: author) }
-
-    before { question.subscribers.push(author) }
-
-    context 'question is one of the subscriptions of user' do
-      it 'unsubscribes' do
-        expect { patch :subscribe, params: { id: question }, format: :js}.to change(question.subscribers, :count).by(-1)
-      end
-
-      it 'redirects to question' do
-        patch :subscribe, params: { id: question }, format: :js
-        expect(response).to render_template :subscribe
-      end
-    end
-
-    context 'question is not one of the subscriptions of user' do
-
-      before { author.subscriptions.clear }
-
-      it 'subscribes' do
-        expect { patch :subscribe, params: { id: question }, format: :js}.to change(author.subscriptions, :count).by(1)
-      end
-
-      it 'redirects to question' do
-        patch :subscribe, params: { id: question }, format: :js
-        expect(response).to render_template :subscribe
-      end
-    end
-  end
 end
