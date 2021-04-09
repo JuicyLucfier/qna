@@ -4,7 +4,9 @@ RSpec.describe User, type: :model do
   it { should have_many(:questions).dependent(:destroy) }
   it { should have_many(:answers).dependent(:destroy) }
   it { should have_many(:user_badges).dependent(:destroy) }
+  it { should have_many(:user_subscriptions).dependent(:destroy) }
   it { should have_many(:badges).through(:user_badges) }
+  it { should have_many(:subscriptions).through(:user_subscriptions) }
   it { should have_many(:votes).dependent(:destroy) }
   it { should have_many(:comments).dependent(:destroy) }
 
@@ -58,6 +60,44 @@ RSpec.describe User, type: :model do
 
     it 'vote is not found' do
       expect(user.vote(question)).to_not eq vote
+    end
+  end
+
+  describe '#manage_subscription_of(subject)' do
+    let(:user) { create(:user) }
+    let(:question) { create(:question, author: user) }
+
+    context 'user subscribed' do
+      before { user.subscriptions.push(question) }
+
+      it 'unsubscribes user' do
+        expect { user.manage_subscription_of(question) }.to change(question.subscribers, :count).by(-1)
+      end
+    end
+
+    context 'user unsubscribed' do
+      it 'subscribes user' do
+        expect { user.manage_subscription_of(question) }.to change(question.subscribers, :count).by(1)
+      end
+    end
+  end
+
+  describe '#subscribed?(subject)' do
+    let(:user) { create(:user) }
+    let(:question) { create(:question, author: user) }
+
+    context 'user subscribed' do
+      before { user.subscriptions.push(question) }
+
+      it 'returns true' do
+        expect(user.subscribed?(question)).to be_truthy
+      end
+    end
+
+    context 'user unsubscribed' do
+      it 'returns false' do
+        expect(user.subscribed?(question)).to be_falsey
+      end
     end
   end
 end

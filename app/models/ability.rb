@@ -42,5 +42,7 @@ class Ability
     can :me, User do |profile|
       profile.id == user.id
     end
+
+    can :subscribe, Question
   end
 end

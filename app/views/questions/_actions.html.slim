@@ -5,3 +5,27 @@
           method: :delete,
           remote: true,
           data: { confirm: 'Are you sure?' }
+
+-if can? :subscribe, question
+  -if current_user.subscribed?(question)
+    p= link_to 'Unsubscribe', subscribe_question_path(question),
+            class: 'unsubscribe-link',
+            method: 'patch',
+            remote: true,
+            data: { link_name: 'unsubscribe-link', subscribed: true }
+    p= link_to 'Subscribe', subscribe_question_path(question),
+            class: 'subscribe-link hidden',
+            method: 'patch',
+            remote: true,
+            data: { link_name: 'subscribe-link', subscribed: false }
+  -else
+    p= link_to 'Subscribe', subscribe_question_path(question),
+            class: 'subscribe-link',
+            method: 'patch',
+            remote: true,
+            data: { link_name: 'unsubscribe-link', subscribed: true }
+    p= link_to 'Unsubscribe', subscribe_question_path(question),
+            class: 'unsubscribe-link hidden',
+            method: 'patch',
+            remote: true,
+            data: { link_name: 'subscribe-link', subscribed: false }

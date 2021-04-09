@@ -1,5 +1,7 @@
 class NewAnswerNotification
   def send_answer(answer)
-    NewAnswerNotificationMailer.answer(answer).deliver_later
+    answer.question.subscribers.find_each(batch_size: 500) do |user|
+      NewAnswerNotificationMailer.answer(answer, user).deliver_later
+    end
   end
 end

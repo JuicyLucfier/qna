@@ -19,6 +19,7 @@ class QuestionsController < ApplicationController
     question.author = current_user
 
     if question.save
+      current_user.subscriptions.push(question)
       redirect_to question, notice: 'Your question successfully created.'
     else
       render :new
@@ -46,6 +47,13 @@ class QuestionsController < ApplicationController
     question.destroy
 
     redirect_to questions_path, notice: 'Question successfully deleted!'
+  end
+
+  def subscribe
+    authorize! :subscribe, question
+    @question = question
+    @comment = Comment.new
+    current_user.manage_subscription_of(question)
   end
 
   private

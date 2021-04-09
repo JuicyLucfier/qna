@@ -9,6 +9,8 @@ class Question < ApplicationRecord
   has_many :links, dependent: :destroy, as: :linkable
   has_many :votes, dependent: :destroy, as: :votable
   has_many :comments, dependent: :destroy, as: :commentable
+  has_many :user_subscriptions, dependent: :destroy
+  has_many :subscribers, class_name: 'User', through: :user_subscriptions
 
   has_many_attached :files, dependent: :destroy
 

@@ -1,7 +1,7 @@
 class NewAnswerNotificationMailer < ApplicationMailer
-  def answer(answer)
+  def answer(answer, user)
     @answer = answer
 
-    mail to: answer.author.email, subject: "New answer!"
+    mail to: user.email, subject: "New answer!"
   end
 end
