@@ -19,4 +19,24 @@ RSpec.describe Question, type: :model do
   it 'have many attached files' do
     expect(Question.new.files).to be_an_instance_of(ActiveStorage::Attached::Many)
   end
+
+  describe '#all_created_last_day' do
+    let(:user) { create(:user) }
+
+    context 'questions created last day' do
+      let!(:questions) { create_list(:question, 3, author: user) }
+
+      it 'returns these questions' do
+        expect(Question.all_created_last_day).to match_array(questions)
+      end
+    end
+
+    context 'questions created not last day' do
+      let!(:questions) { create_list(:question, 3, created_at: Time.now - 999999, author: user) }
+
+      it 'returns empty array' do
+        expect(Question.all_created_last_day).to match_array([])
+      end
+    end
+  end
 end

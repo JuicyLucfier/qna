@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :comments, class_name: 'Comment', foreign_key: :author_id, dependent: :destroy
   has_many :user_badges, dependent: :destroy
   has_many :badges, through: :user_badges
+  has_many :subscriptions, dependent: :destroy
   has_many :votes, dependent: :destroy
 
   scope :all_except, ->(user) { where("id != ?", user.id) }
@@ -23,5 +24,13 @@ class User < ApplicationRecord
 
   def vote(subject)
     votes.find_by(votable: subject)
+  end
+
+  def subscribed?(subject)
+    subscription(subject).present?
+  end
+
+  def subscription(subject)
+    subscriptions.find_by(question: subject)
   end
 end

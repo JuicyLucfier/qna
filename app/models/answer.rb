@@ -17,6 +17,8 @@ class Answer < ApplicationRecord
   validates :body, presence: true
   validate :validate_best_answer_present, on: :create, if: :best?
 
+  after_create :send_mail
+
   def change_mark
     if best?
       self.best = false
@@ -43,5 +45,9 @@ class Answer < ApplicationRecord
 
   def validate_best_answer_present
     errors.add(:best) if question.answers.find_by(best: true).present?
+  end
+
+  def send_mail
+    NewAnswerNotificationJob.perform_later(self)
   end
 end

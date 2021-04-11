@@ -60,4 +60,35 @@ RSpec.describe User, type: :model do
       expect(user.vote(question)).to_not eq vote
     end
   end
+
+  describe '#subscribed?(subject)' do
+    let(:user) { create(:user) }
+    let(:question) { create(:question, author: user) }
+
+    context 'user subscribed' do
+      before { user.subscriptions.create(question: question) }
+
+      it 'returns true' do
+        expect(user.subscribed?(question)).to be_truthy
+      end
+    end
+
+    context 'user unsubscribed' do
+      it 'returns false' do
+        expect(create(:user).subscribed?(question)).to be_falsey
+      end
+    end
+  end
+
+  describe "Search for user's subscription that matches object's id" do
+    let!(:subscription) { create(:subscription, question: question, user: user) }
+
+    it 'subscription is found' do
+      expect(user.subscription(question)).to eq subscription
+    end
+
+    it 'subscription is not found' do
+      expect(author.subscription(question)).to_not eq subscription
+    end
+  end
 end

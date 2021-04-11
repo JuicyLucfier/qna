@@ -5,3 +5,16 @@
           method: :delete,
           remote: true,
           data: { confirm: 'Are you sure?' }
+
+-if current_user&.subscribed?(question)
+  -if can? :destroy, current_user&.subscription(question)
+    p= link_to 'Unsubscribe', subscription_path(current_user.subscription(question)),
+            class: 'unsubscribe-link',
+            method: 'delete',
+            remote: true
+-else
+  -if can? :create, Subscription
+    p= link_to 'Subscribe', question_subscriptions_path(question),
+            class: 'subscribe-link',
+            method: 'post',
+            remote: true
